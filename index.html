@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>沖繩 8天7夜自駕行程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132A2E;
+    --sea:#0C4F55;
+    --sea-deep:#082F34;
+    --sea-tint:#E4F0EE;
+    --coral:#E2603D;
+    --coral-tint:#FBE7DF;
+    --gold:#D6A544;
+    --sand:#F6F1E3;
+    --paper:#FFFDF8;
+    --line:#DDD4C0;
+    --muted:#6E7E7C;
+    --radius-s:10px;
+    --radius-m:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans TC', sans-serif;
+    background:var(--sand);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  h1,h2,h3,.serif{font-family:'Noto Serif TC', serif;}
+
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    box-shadow:0 0 40px rgba(8,47,52,0.08);
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:linear-gradient(160deg, var(--sea-deep), var(--sea) 75%);
+    color:#fff;
+    padding:22px 20px 16px;
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  header .eyebrow{
+    font-size:12px;
+    letter-spacing:.06em;
+    color:#BFE0DB;
+    margin:0 0 4px;
+  }
+  header h1{
+    font-size:22px;
+    line-height:1.3;
+    margin:0 0 2px;
+    font-weight:700;
+  }
+  header .sub{
+    font-size:12.5px;
+    color:#CFE7E3;
+    margin:0;
+  }
+  .wave{
+    position:absolute; left:0; right:0; bottom:-1px; height:14px;
+    background:var(--paper);
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;
+    transform:scaleX(1.4);
+  }
+
+  /* day chip scroller (only on itinerary tab) */
+  .day-scroller{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:14px 20px 0;
+    scrollbar-width:none;
+  }
+  .day-scroller::-webkit-scrollbar{display:none;}
+  .day-chip{
+    flex:0 0 auto;
+    padding:7px 13px;
+    border-radius:999px;
+    background:rgba(255,255,255,.12);
+    color:#EAF4F2;
+    font-size:12.5px;
+    font-weight:600;
+    border:1px solid rgba(255,255,255,.18);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .day-chip.active{
+    background:var(--coral);
+    border-color:var(--coral);
+    color:#fff;
+  }
+  .day-chip .dot{
+    display:inline-block;width:5px;height:5px;border-radius:50%;
+    background:var(--gold); margin-right:5px; vertical-align:middle;
+  }
+
+  /* ---------- Content ---------- */
+  main{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 18px 90px;
+  }
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fadeUp .32s ease both;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .day-head{
+    margin-bottom:14px;
+  }
+  .day-head h2{
+    font-size:19px;
+    margin:0 0 3px;
+    color:var(--sea-deep);
+  }
+  .day-head .date-line{
+    font-size:12.5px;
+    color:var(--muted);
+  }
+  .callout{
+    background:var(--coral-tint);
+    border-left:3px solid var(--coral);
+    padding:9px 12px;
+    border-radius:0 8px 8px 0;
+    font-size:12.5px;
+    color:#7A3520;
+    margin:10px 0 16px;
+    line-height:1.5;
+  }
+  .callout.good{
+    background:var(--sea-tint);
+    border-left-color:var(--sea);
+    color:var(--sea-deep);
+  }
+
+  /* timeline */
+  .timeline{
+    position:relative;
+    padding-left:20px;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:5px; top:6px; bottom:6px;
+    width:1.5px;
+    background:var(--line);
+  }
+  .item{
+    position:relative;
+    padding-bottom:20px;
+  }
+  .item:last-child{padding-bottom:0;}
+  .item::before{
+    content:"";
+    position:absolute;
+    left:-19px; top:5px;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--sea);
+    border:2px solid var(--paper);
+    box-shadow:0 0 0 1.5px var(--sea);
+  }
+  .item.meal::before{background:var(--coral); box-shadow:0 0 0 1.5px var(--coral);}
+  .item.highlight::before{background:var(--gold); box-shadow:0 0 0 1.5px var(--gold);}
+
+  .item .time{
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--sea);
+    letter-spacing:.02em;
+  }
+  .item.meal .time{color:var(--coral);}
+  .item.highlight .time{color:#A87A16;}
+
+  .item .card{
+    margin-top:4px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius-s);
+    padding:11px 12px;
+  }
+  .item .title{
+    font-size:14.5px;
+    font-weight:700;
+    margin:0 0 3px;
+    color:var(--ink);
+  }
+  .item .meta{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .item .meta b{color:var(--ink); font-weight:600;}
+  .item .note{
+    margin-top:6px;
+    font-size:11.5px;
+    background:#FFF6E8;
+    color:#8A5A00;
+    border-radius:6px;
+    padding:5px 8px;
+    line-height:1.5;
+  }
+  .row-btns{display:flex; gap:8px; margin-top:9px; flex-wrap:wrap;}
+  .map-btn{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:12px; font-weight:600;
+    color:#fff; background:var(--sea);
+    padding:6px 11px; border-radius:999px;
+    text-decoration:none;
+    border:none;
+  }
+  .map-btn svg{width:12px; height:12px;}
+  .drive-link{
+    display:flex; align-items:center; gap:6px;
+    font-size:11.5px; color:var(--muted);
+    margin:6px 0 0 -20px; padding-left:20px;
+  }
+
+  /* ---------- Transport tab ---------- */
+  .card-block{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:14px 15px; margin-bottom:14px;
+  }
+  .card-block h3{font-size:15px; margin:0 0 8px; color:var(--sea-deep);}
+  .kv{display:flex; justify-content:space-between; font-size:12.5px; padding:5px 0; border-bottom:1px dashed var(--line);}
+  .kv:last-child{border-bottom:none;}
+  .kv span:first-child{color:var(--muted);}
+  .kv span:last-child{font-weight:600; text-align:right; max-width:60%;}
+
+  .drive-table{width:100%; border-collapse:collapse; font-size:12px;}
+  .drive-table th{
+    text-align:left; color:var(--muted); font-weight:600;
+    padding:5px 4px; border-bottom:1px solid var(--line);
+  }
+  .drive-table td{padding:6px 4px; border-bottom:1px solid #EFE9D8;}
+  .drive-table td.time{color:var(--sea); font-weight:700; white-space:nowrap;}
+
+  /* ---------- Accommodation ---------- */
+  .hotel-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius-m);
+    overflow:hidden; margin-bottom:16px;
+  }
+  .hotel-card .top{
+    background:linear-gradient(120deg, var(--sea), var(--sea-deep));
+    color:#fff; padding:13px 15px;
+  }
+  .hotel-card .top .nights{
+    font-size:11px; color:var(--gold); font-weight:700; letter-spacing:.03em;
+  }
+  .hotel-card .top h3{margin:3px 0 0; font-size:16px;}
+  .hotel-card .body{padding:12px 15px;}
+
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700; padding:2px 8px;
+    border-radius:999px; margin-right:6px;
+  }
+  .badge.yes{background:#E1F2E0; color:#25702B;}
+  .badge.no{background:#F3E4E1; color:#93372A;}
+
+  /* ---------- Packing ---------- */
+  .checklist{list-style:none; padding:0; margin:0;}
+  .checklist li{
+    display:flex; align-items:flex-start; gap:9px;
+    font-size:13px; padding:9px 0; border-bottom:1px solid #EFE9D8;
+  }
+  .checklist li:last-child{border-bottom:none;}
+  .checklist input[type=checkbox]{
+    margin-top:2px; width:16px; height:16px; accent-color:var(--sea); flex:0 0 auto;
+  }
+  .checklist label{cursor:pointer;}
+
+  .info-item{margin-bottom:12px;}
+  .info-item .k{font-size:12.5px; font-weight:700; color:var(--sea-deep); margin-bottom:2px;}
+  .info-item .v{font-size:12.5px; color:var(--ink); line-height:1.6;}
+
+  /* ---------- Budget ---------- */
+  .total-box{
+    background:linear-gradient(135deg, var(--sea-deep), var(--sea));
+    color:#fff; border-radius:var(--radius-m); padding:18px 16px; margin-bottom:16px;
+    text-align:center;
+  }
+  .total-box .label{font-size:12px; color:#BFE0DB;}
+  .total-box .num{font-size:30px; font-weight:900; font-family:'Noto Serif TC',serif; margin:2px 0;}
+  .total-box .cap{font-size:11.5px; color:#CFE7E3;}
+
+  .bar-row{margin-bottom:11px;}
+  .bar-row .bar-label{
+    display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;
+  }
+  .bar-row .bar-label b{font-weight:700;}
+  .bar-track{height:8px; background:var(--sea-tint); border-radius:999px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--coral); border-radius:999px;}
+
+  .day-cost-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; padding:8px 0; border-bottom:1px solid #EFE9D8;
+  }
+  .day-cost-row:last-child{border-bottom:none;}
+  .day-cost-row .d{color:var(--muted);}
+  .day-cost-row .amt{font-weight:700; color:var(--sea-deep);}
+
+  /* ---------- Bottom nav ---------- */
+  nav.bottom{
+    position:sticky; bottom:0; left:0; right:0;
+    background:#fff;
+    border-top:1px solid var(--line);
+    display:flex;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    z-index:30;
+  }
+  nav.bottom button{
+    flex:1; background:none; border:none; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:6px 2px; color:var(--muted); font-family:inherit;
+  }
+  nav.bottom button svg{width:20px; height:20px; stroke:var(--muted); fill:none; stroke-width:1.8;}
+  nav.bottom button span{font-size:10.5px; font-weight:600;}
+  nav.bottom button.active{color:var(--sea);}
+  nav.bottom button.active svg{stroke:var(--sea);}
+
+  ::-webkit-scrollbar{width:0; height:0;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <p class="eyebrow">OKINAWA · 独遊自駕 2026.09.20–27</p>
+    <h1 id="headerTitle">沖繩 8天7夜行程</h1>
+    <p class="sub" id="headerSub">Day 1 · 9/20（日）抵達沖繩・那霸市區</p>
+    <div class="day-scroller" id="dayScroller"></div>
+    <div class="wave"></div>
+  </header>
+
+  <main id="main">
+    <section class="panel active" id="panel-itinerary"></section>
+    <section class="panel" id="panel-transport"></section>
+    <section class="panel" id="panel-hotel"></section>
+    <section class="panel" id="panel-pack"></section>
+    <section class="panel" id="panel-budget"></section>
+  </main>
+
+  <nav class="bottom" id="bottomNav">
+    <button data-tab="itinerary" class="active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+      <span>每日行程</span>
+    </button>
+    <button data-tab="transport">
+      <svg viewBox="0 0 24 24"><path d="M5 16h14M6 16l1.5-6h9L18 16M7 16v3M17 16v3"/><circle cx="8" cy="16" r="1.2"/><circle cx="16" cy="16" r="1.2"/></svg>
+      <span>交通</span>
+    </button>
+    <button data-tab="hotel">
+      <svg viewBox="0 0 24 24"><path d="M3 19V6M3 12h18v7M3 12V9a2 2 0 012-2h6a2 2 0 012 2v3M15 9h4a2 2 0 012 2v1"/></svg>
+      <span>住宿</span>
+    </button>
+    <button data-tab="pack">
+      <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V6a2 2 0 012-2h2a2 2 0 012 2v2M4 13h16"/></svg>
+      <span>行李</span>
+    </button>
+    <button data-tab="budget">
+      <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
+      <span>預算</span>
+    </button>
+  </nav>
+
+</div>
+
+<script>
+/* ============ DATA ============ */
+const gm = q => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+const days = [
+{
+  n:1, date:"9/20（日）", title:"抵達沖繩・那霸市區",
+  callout:null,
+  items:[
+    {t:"依航班", ty:"", title:"抵達那霸機場", meta:"入境後前往租車櫃台"},
+    {t:"14:00", ty:"", title:"取車 — Relax car rental", meta:"辦手續約15-20分・Honda N-Box", map:gm("Relax car rental Wakasa Naha Okinawa"), drive:"→ 15-20分 開往酒店"},
+    {t:"14:30", ty:"", title:"那霸柔婕閣酒店 Check-in", meta:"停留約30分・停車場約¥1,000-1,500/晚", drive:"→ 開車10分／步行15分 至餐廳"},
+    {t:"15:30", ty:"", title:"國際通輕鬆走走", meta:"彈性停留・先熟悉市區環境"},
+    {t:"18:30", ty:"meal", title:"🍣 琉球壽司 築地青空三代目（Omakase已訂）", meta:"約2小時・<b>JPY 4,200</b>・停車：Times牧志2丁目 ¥200/30分", map:gm("琉球寿司 築地青空三代目 那覇本店")},
+  ],
+  cost:"HKD ~100（晚餐已含訂金）"
+},
+{
+  n:2, date:"9/21（一）🎂 生日", title:"生日日！那霸市區 ＋ 美國村",
+  callout:{good:true, text:"✅ 已確認：9/21為「敬老の日」，2026年適逢五連休。美浜アメリカンビレッジ在 Sunset Beach 南側特別加開煙花＋エイサー＋フラダンス表演，作為生日壓軸！"},
+  items:[
+    {t:"08:30", ty:"meal", title:"早餐：Manmaru Cafe", meta:"停留約45分", map:gm("Manmaru Cafe Naha Okinawa"), drive:"→ 10分"},
+    {t:"10:00", ty:"", title:"波上宮", meta:"停留30-40分・神社免費停車場", map:gm("波上宮 Naminoue Shrine Naha"), drive:"→ 15分"},
+    {t:"11:00", ty:"", title:"西來院 達摩寺", meta:"停留20-30分・廟前空地（4-6格）免費", map:gm("西来院 Sairaiin 首里赤田町"), drive:"→ 步行5分"},
+    {t:"11:45", ty:"meal", title:"午餐：Chokotto Sushi 国際通屋台村", meta:"停留45分-1小時・停車：Times牧志2丁目第3", map:gm("ちょこっと寿司 国際通屋台村"), note:"⏰ 已提早，避開連假12:00後排隊尖峰", drive:"→ 30-35分"},
+    {t:"13:15", ty:"", title:"🎁 RYUBO ／ 訂製香水 ／ 相機店", meta:"停留2-2.5小時・RYUBO自有停車場（消費可折抵）", map:gm("RYUBO Department Store Naha"), drive:"→ 30-35分"},
+    {t:"16:15", ty:"", title:"美國村 Depot Island 逛街", meta:"彈性停留・免費停車（デポアイランド前）", map:gm("Depot Island Chatan Okinawa")},
+    {t:"17:30", ty:"meal", title:"🎂 生日晚餐：美國村海鮮居酒屋", meta:"停留1-1.5小時・吧台座可一人用餐・可點無酒精飲品", map:gm("アメリカンビレッジ デポアイランド 海鮮 居酒屋"), note:"⏰ 已提早，連假+煙花晚一點易客滿", drive:"→ 步行10分"},
+    {t:"19:45", ty:"highlight", title:"移動至 Sunset Beach 南側卡位", meta:"約15分"},
+    {t:"20:00", ty:"highlight", title:"🎆 生日壓軸：敬老の日連假特別煙花＋エイサー＋フラダンス", meta:"約30分・不需門票", map:gm("Sunset Beach Chatan Okinawa")},
+  ],
+  cost:"HKD 600-800"
+},
+{
+  n:3, date:"9/22（二）", title:"市場 ＋ 南部祕境",
+  callout:{good:false, text:"⚠️ 本日為「國民の休日」連假中段，市場／南部景點／晚餐時間已全部調整以避開人潮尖峰"},
+  items:[
+    {t:"08:00", ty:"meal", title:"早餐：egg me time（蛋包飯）", meta:"停留45分・已提早", map:gm("egg me time Naha Okinawa"), drive:"→ 30分"},
+    {t:"09:00", ty:"", title:"牧志公設市場 1F 花生豆腐花", meta:"停留45分-1小時・アップルパーク松尾2丁目 24hr最高約¥1,100", map:gm("Makishi Public Market Naha"), note:"⏰ 已提早至開市即到，避開連假人潮", drive:"→ 30分"},
+    {t:"11:00", ty:"", title:"奧武島 貓島", meta:"停留1小時・免費路邊/漁港旁", map:gm("奥武島 Ojima Island Nanjo"), note:"⏰ 路線已對調，先來這裡人較少", drive:"→ 30分"},
+    {t:"13:30", ty:"meal", title:"Umikaji Terrace 瀨長島（午餐）", meta:"停留1.5-2小時・免費大型停車場", map:gm("Umikaji Terrace Senagajima"), note:"⏰ 已避開中午尖峰", drive:"→ 15分"},
+    {t:"16:00", ty:"", title:"Okinawa Prefectural Museum（Okimyu）", meta:"停留1-1.5小時・自有停車場 免費/約¥200", map:gm("Okinawa Prefectural Museum Naha"), drive:"→ 15分"},
+    {t:"18:00", ty:"meal", title:"晚餐：ももすけ（安里）", meta:"海鮮居酒屋・吧台座、單人友善・停留1-1.5小時", map:gm("ももすけ 安里 那覇"), note:"⏰ 已提早避開連假晚上候位"},
+  ],
+  cost:"HKD 400-500"
+},
+{
+  n:4, date:"9/23（三）", title:"那霸 → 北部（換酒店日）",
+  callout:null,
+  items:[
+    {t:"10:00", ty:"", title:"那霸柔婕閣酒店 Check-out", meta:"", drive:"→ 50-55分"},
+    {t:"11:00", ty:"", title:"Doka Doka 土花土花海景咖啡（恩納村）", meta:"停留1-1.5小時・自有（6-8格）免費", map:gm("土花土花 Doka Doka 恩納村前兼久243-1"), note:"⚠️ 10:30-11:00休息時間已避開", drive:"→ 35-40分"},
+    {t:"13:30", ty:"", title:"Hoshi no Terrace Motobu Yamazato Check-in", meta:"停留30分・飯店自有，通常免費"},
+    {t:"15:00", ty:"", title:"自由活動 / 美麗海周邊", meta:"彈性停留", drive:"→ 15-20分"},
+    {t:"19:30", ty:"meal", title:"🍖 長堂屋 今歸仁阿古豬涮涮鍋（已訂・豬肉料理）", meta:"約1.5小時・店家自有停車場 免費", map:gm("長堂屋 今帰仁村 アグー")},
+  ],
+  cost:"HKD ~250"
+},
+{
+  n:5, date:"9/24（四）", title:"古宇利島 ＋ Kishimoto Shokudo",
+  callout:{good:false, text:"⚠️ 已修正：Kishimoto Shokudo 原誤排於那霸，實際位於本部町，已改排至本日午後"},
+  items:[
+    {t:"08:00", ty:"meal", title:"飯店早餐（含）", meta:"停留45分", drive:"→ 35-40分"},
+    {t:"10:30", ty:"", title:"古宇利大橋拍照", meta:"停留20-30分・路邊觀景台大部分免費", map:gm("古宇利大橋 Kouri Bridge"), drive:"→ 5分"},
+    {t:"11:00", ty:"meal", title:"Shirasa Shokudo（海膽飯）＋ Kouri Shrimp（蝦蝦飯）", meta:"停留1-1.5小時・店家自有停車場 免費", map:gm("しらさ食堂 Shirasa Shokudo Kouri"), drive:"→ 30分"},
+    {t:"13:00", ty:"meal", title:"🍜 Kishimoto Shokudo 沖繩麵（本部町）", meta:"停留45分-1小時・自有停車場（11台）免費", map:gm("きしもと食堂 本部町"), note:"⚠️ 賣完提早關門，建議此時段前抵達", drive:"→ 15-20分"},
+    {t:"14:30", ty:"", title:"美麗海水族館周邊自由活動", meta:"彈性停留"},
+    {t:"18:30", ty:"meal", title:"晚餐：ヤンバル食堂（名護）", meta:"吧台+桌席，單人友善・停留約1小時", map:gm("ヤンバル食堂 名護市宮里")},
+  ],
+  cost:"HKD 500-600"
+},
+{
+  n:6, date:"9/25（五）", title:"北部沿岸南下 → 那霸",
+  callout:{good:false, text:"⚠️ 本日車程較長，Ishigufu售完為止，建議依實際情況彈性調整順序"},
+  items:[
+    {t:"08:00", ty:"meal", title:"飯店早餐（最後一次含早餐）", meta:"停留45分"},
+    {t:"10:00", ty:"", title:"Check-out", meta:"", drive:"→ 30-35分"},
+    {t:"10:30", ty:"", title:"Ten no Fune 天の船 Cafe（大宜味村）", meta:"停留1.5小時・自有停車場 免費", map:gm("天の船 Cafe 大宜味村"), drive:"→ 25-30分"},
+    {t:"12:30", ty:"", title:"白色 Starbucks（名護21世紀の森公園）", meta:"停留30-40分・免費", map:gm("スターバックス 名護21世紀の森公園"), drive:"→ 20分"},
+    {t:"13:30", ty:"", title:"BANTA CAFE by Hoshino Resorts（万座）", meta:"停留1-1.5小時・自有停車場 免費", map:gm("BANTA CAFE Hoshino Resorts Okinawa"), drive:"→ 35-40分"},
+    {t:"15:30", ty:"meal", title:"Chicken soba Ishigufu（浦添）", meta:"停留約1小時・自有停車場 免費", map:gm("いしぐふー 港川店 浦添"), note:"⚠️ 售完為止，建議12:30前抵達更保險", drive:"→ 25-30分"},
+    {t:"17:00", ty:"", title:"Hotel Anteroom Naha Check-in", meta:"停留30分・飯店自有（訂單標註可泊車）", drive:"→ 10-15分"},
+    {t:"18:00", ty:"", title:"PARCO CITY / Pokemon Center Okinawa", meta:"停留2小時・自有大型免費停車場", map:gm("PARCO CITY Okinawa"), drive:"→ 步行"},
+    {t:"20:00", ty:"meal", title:"晚餐：大安丸（おもろまち）", meta:"海鮮專門店・單人吧台座・停留約1小時", map:gm("大安丸 おもろまち 那覇")},
+  ],
+  cost:"HKD 500-600"
+},
+{
+  n:7, date:"9/26（六）", title:"那霸市區深度遊 ＋ 燒肉晚餐",
+  callout:null,
+  items:[
+    {t:"09:00", ty:"meal", title:"早餐：Trip Cafe Okinawa", meta:"停留約1小時", map:gm("Trip Cafe Okinawa"), drive:"→ 10分"},
+    {t:"10:30", ty:"", title:"相機店（新都心）", meta:"停留30分・商場自有停車場", map:gm("カメラのキタムラ AEON Naha"), drive:"→ 5-10分"},
+    {t:"12:00", ty:"", title:"寵物店巡禮", meta:"停留45分・商場自有停車場", map:gm("Pet Box Okinawa"), drive:"→ 10-15分"},
+    {t:"14:00", ty:"", title:"The Sinmay ／ Shima Buns", meta:"停留1-1.5小時", map:gm("The Sinmay Okinawa"), note:"⚠️ 注意肉桂卷營業時間，建議提早確認", drive:"→ 10分"},
+    {t:"17:00", ty:"meal", title:"🔥 炭火燒肉ぶち 久茂地2号店（已訂・豬肉為主）", meta:"停留1.5小時・停車：Times久茂地 30分/¥200起", map:gm("炭火焼肉ぶち 久茂地2号店"), drive:"→ 步行"},
+    {t:"19:00", ty:"", title:"國際通逛街買手信", meta:"停留1.5-2小時"},
+  ],
+  cost:"HKD 600-700"
+},
+{
+  n:8, date:"9/27（日）", title:"賦歸日",
+  callout:null,
+  items:[
+    {t:"08:00", ty:"meal", title:"早餐：Pork Tamago Onigiri Honten（外帶）", meta:"停留20分", map:gm("ポークたまごおにぎり本店 Naha"), drive:"→ 20分"},
+    {t:"09:00", ty:"", title:"iias Okinawa Toyosaki 最後購物", meta:"停留1.5小時・自有大型免費停車場", map:gm("iias Okinawa Toyosaki"), drive:"→ 15分"},
+    {t:"11:00", ty:"", title:"前往還車", meta:""},
+    {t:"11:30", ty:"", title:"還車 Relax car rental", meta:"約15-20分"},
+    {t:"依航班", ty:"", title:"機場 Check-in、飛回香港", meta:""},
+  ],
+  cost:"—"
+},
+];
+
+const hotels = [
+  {name:"那霸柔婕閣酒店", nights:"9/20 → 9/23（3晚）", bf:false, area:"那霸市區", note:"停車場約¥1,000-1,500/晚，建議入住時跟櫃台確認車位", map:gm("那覇柔婕閣酒店 Naha")},
+  {name:"Hoshi no Terrace Motobu Yamazato", nights:"9/23 → 9/25（2晚）", bf:true, area:"本部・山景雙人房", note:"飯店自有停車場，通常免費（度假村常見）", map:gm("Hoshi no Terrace Motobu Yamazato")},
+  {name:"Hotel Anteroom Naha", nights:"9/25 → 9/27（2晚）", bf:false, area:"那霸市區", note:"訂單已標註「可泊車」，建議 check-in 時再次確認停車費用", map:gm("Hotel Anteroom Naha")},
+];
+
+const packing = [
+  "護照、駕照（國際駕照或日本譯本，自駕必備）",
+  "信用卡、少量日圓現金（很多小店/停車場只收現金）",
+  "¥100/¥500 硬幣（收費停車場常用）",
+  "已下載的 eSIM QR code 截圖（兩段：9/20-9/25、9/26-9/27）",
+  "防曬乳",
+  "輕便雨具（9月沖繩仍有機會下雨/颱風）",
+  "保暖薄外套（餐廳冷氣較強）",
+  "環保購物袋（超商購物袋收費）",
+];
+
+const info = [
+  {k:"📱 網路", v:"KKday eSIM，注意 9/25-9/26 之間切換第二張"},
+  {k:"💴 換匯", v:"建議香港先換一部分日圓，國際通/機場也有換匯所"},
+  {k:"🛡️ 保險", v:"Zurich Breezy Travel（Prime Plan），24小時緊急專線 +852 2886 3977"},
+  {k:"🚗 租車注意", v:"19:01-20:30 取還車需額外付 ¥5,000，本行程取還車時間均在正常時段，無額外費用"},
+  {k:"🛣️ 駕駛方向", v:"日本靠左行駛，與香港相同"},
+  {k:"🍽️ 飲食", v:"全程已避開牛肉料理，餐廳均可點無酒精飲品"},
+];
+
+const budgetItems = [
+  {label:"餐飲", val:2800, max:2800},
+  {label:"購物（含生日香水等）", val:2000, max:2800},
+  {label:"咖啡/小食", val:800, max:2800},
+  {label:"景點/雜費", val:500, max:2800},
+  {label:"停車費", val:460, max:2800},
+  {label:"油費", val:270, max:2800},
+  {label:"預留彈性", val:600, max:2800},
+];
+
+const dailyCost = days.map(d=>({label:`Day ${d.n} ｜ ${d.date}`, val:d.cost}));
+
+/* ============ RENDER ============ */
+const iconMap = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+
+function renderItinerary(){
+  const scroller = document.getElementById('dayScroller');
+  scroller.innerHTML = days.map(d=>
+    `<div class="day-chip ${d.n===1?'active':''}" data-day="${d.n}"><span class="dot"></span>Day ${d.n}</div>`
+  ).join('');
+
+  const panel = document.getElementById('panel-itinerary');
+  panel.innerHTML = days.map(d=>`
+    <div class="day-view" id="day-${d.n}" style="${d.n===1?'':'display:none;'}">
+      <div class="day-head">
+        <h2>Day ${d.n}・${d.title}</h2>
+        <div class="date-line">${d.date}</div>
+      </div>
+      ${d.callout ? `<div class="callout ${d.callout.good?'good':''}">${d.callout.text}</div>` : ''}
+      <div class="timeline">
+        ${d.items.map(it=>`
+          <div class="item ${it.ty}">
+            <div class="time">${it.t}</div>
+            <div class="card">
+              <p class="title">${it.title}</p>
+              ${it.meta ? `<p class="meta">${it.meta}</p>` : ''}
+              ${it.note ? `<div class="note">${it.note}</div>` : ''}
+              ${it.map ? `<div class="row-btns"><a class="map-btn" href="${it.map}" target="_blank" rel="noopener">${iconMap}導航</a></div>` : ''}
+            </div>
+            ${it.drive ? `<div class="drive-link">🚗 ${it.drive}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      <div class="card-block" style="margin-top:16px;">
+        <div class="kv"><span>本日預估花費</span><span>${d.cost}</span></div>
+      </div>
+    </div>
+  `).join('');
+
+  scroller.addEventListener('click', e=>{
+    const chip = e.target.closest('.day-chip');
+    if(!chip) return;
+    const n = chip.dataset.day;
+    document.querySelectorAll('.day-chip').forEach(c=>c.classList.toggle('active', c===chip));
+    document.querySelectorAll('.day-view').forEach(v=> v.style.display = (v.id===`day-${n}` ? '' : 'none'));
+    const d = days.find(x=>String(x.n)===n);
+    document.getElementById('headerSub').textContent = `Day ${d.n} · ${d.date} ${d.title}`;
+    document.getElementById('main').scrollTop = 0;
+  });
+}
+
+function renderTransport(){
+  const panel = document.getElementById('panel-transport');
+  panel.innerHTML = `
+    <div class="day-head"><h2>交通 & 停車</h2><div class="date-line">全程自駕・Honda N-Box</div></div>
+
+    <div class="card-block">
+      <h3>🚗 租車資訊</h3>
+      <div class="kv"><span>車款</span><span>Honda N-Box（或同等迷你車型）</span></div>
+      <div class="kv"><span>取車</span><span>9/20 14:00・Relax car rental</span></div>
+      <div class="kv"><span>還車</span><span>9/27 11:30</span></div>
+      <div class="kv"><span>地點</span><span>那霸 Wakasa</span></div>
+      <div class="kv"><span>電話</span><span>819082903579</span></div>
+      <div class="kv"><span>⚠️ 額外費用</span><span>19:01-20:30取還車加收¥5,000（本行程無適用）</span></div>
+    </div>
+
+    <div class="card-block">
+      <h3>🅿️ 停車策略總覽</h3>
+      <div class="kv"><span>那霸國際通/牧志市場</span><span>Times等收費停車場，約¥200/30分</span></div>
+      <div class="kv"><span>美國村 Depot Island</span><span>免費（部分120分鐘免費）</span></div>
+      <div class="kv"><span>恩納/北部餐廳咖啡店</span><span>大部分自帶免費停車場</span></div>
+      <div class="kv"><span>古宇利島</span><span>路邊/店家自有，大部分免費</span></div>
+      <div class="kv"><span>各大商場</span><span>自有大型免費停車場</span></div>
+    </div>
+
+    <div class="card-block">
+      <h3>⏱️ 每日主要駕車時間</h3>
+      <table class="drive-table">
+        <tr><th>日</th><th>路段</th><th>時間</th></tr>
+        <tr><td class="time">Day1</td><td>機場→取車→酒店</td><td>約25-35分</td></tr>
+        <tr><td class="time">Day2</td><td>市區→RYUBO→美國村</td><td>約30-35分</td></tr>
+        <tr><td class="time">Day3</td><td>市場→奧武島→瀨長島</td><td>約60分</td></tr>
+        <tr><td class="time">Day4</td><td>那霸→恩納→本部</td><td>約85-95分</td></tr>
+        <tr><td class="time">Day5</td><td>本部→古宇利島來回</td><td>約80分</td></tr>
+        <tr><td class="time">Day6</td><td>大宜味→名護→浦添→那霸</td><td>約135-150分</td></tr>
+        <tr><td class="time">Day7</td><td>市區內移動</td><td>約35-45分</td></tr>
+        <tr><td class="time">Day8</td><td>酒店→iias→還車</td><td>約35分</td></tr>
+      </table>
+    </div>
+
+    <div class="card-block">
+      <h3>🛡️ 保險</h3>
+      <div class="kv"><span>方案</span><span>Zurich Breezy Travel（Prime Plan）</span></div>
+      <div class="kv"><span>緊急專線</span><span>+852 2886 3977（24小時）</span></div>
+      <div class="kv"><span>自駕保障</span><span>Road Trip Cover：Covered ✅</span></div>
+    </div>
+  `;
+}
+
+function renderHotel(){
+  const panel = document.getElementById('panel-hotel');
+  panel.innerHTML = `
+    <div class="day-head"><h2>住宿</h2><div class="date-line">3間飯店・那霸 → 北部 → 那霸</div></div>
+    ${hotels.map(h=>`
+      <div class="hotel-card">
+        <div class="top">
+          <div class="nights">${h.nights}</div>
+          <h3>${h.name}</h3>
+        </div>
+        <div class="body">
+          <span class="badge ${h.bf?'yes':'no'}">${h.bf?'✓ 含早餐':'✕ 不含早餐'}</span>
+          <p class="meta" style="margin:8px 0 2px; font-size:12.5px; color:var(--muted);">${h.area}</p>
+          <p class="meta" style="font-size:12px; color:var(--ink);">${h.note}</p>
+          <div class="row-btns"><a class="map-btn" href="${h.map}" target="_blank" rel="noopener">${iconMap}導航</a></div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderPack(){
+  const panel = document.getElementById('panel-pack');
+  panel.innerHTML = `
+    <div class="day-head"><h2>行李 & 實用資訊</h2><div class="date-line">出發前打勾確認</div></div>
+
+    <div class="card-block">
+      <h3>🎒 行李清單</h3>
+      <ul class="checklist" id="packList">
+        ${packing.map((p,i)=>`
+          <li>
+            <input type="checkbox" id="pk${i}">
+            <label for="pk${i}">${p}</label>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+
+    <div class="card-block">
+      <h3>ℹ️ 實用資訊</h3>
+      ${info.map(x=>`
+        <div class="info-item">
+          <div class="k">${x.k}</div>
+          <div class="v">${x.v}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderBudget(){
+  const panel = document.getElementById('panel-budget');
+  const total = budgetItems.reduce((s,x)=>s+x.val,0);
+  panel.innerHTML = `
+    <div class="day-head"><h2>預算</h2><div class="date-line">不含機票 / 酒店 / 租車</div></div>
+
+    <div class="total-box">
+      <div class="label">預估總支出</div>
+      <div class="num">HKD ${total.toLocaleString()}</div>
+      <div class="cap">目標預算 HKD 8,000 ・ 符合範圍 ✅</div>
+    </div>
+
+    <div class="card-block">
+      <h3>支出分項</h3>
+      ${budgetItems.map(b=>`
+        <div class="bar-row">
+          <div class="bar-label"><span>${b.label}</span><b>HKD ${b.val.toLocaleString()}</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(b.val/b.max*100).toFixed(0)}%"></div></div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card-block">
+      <h3>每日預估花費</h3>
+      ${dailyCost.map(d=>`
+        <div class="day-cost-row"><span class="d">${d.label}</span><span class="amt">${d.val}</span></div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ============ TAB SWITCH ============ */
+function initNav(){
+  const buttons = document.querySelectorAll('#bottomNav button');
+  const titles = {
+    itinerary:['沖繩 8天7夜行程','Day 1 · 9/20（日）抵達沖繩・那霸市區'],
+    transport:['交通 & 停車','租車資訊・停車策略・每日駕車時間'],
+    hotel:['住宿一覽','3間飯店・那霸 → 北部 → 那霸'],
+    pack:['行李 & 實用資訊','出發前打勾確認・保險・網路'],
+    budget:['預算總覽','HKD 8,000（不含機票/酒店/租車）'],
+  };
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.toggle('active', b===btn));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      const tab = btn.dataset.tab;
+      document.getElementById(`panel-${tab}`).classList.add('active');
+      document.getElementById('dayScroller').style.display = tab==='itinerary' ? 'flex' : 'none';
+      document.getElementById('headerTitle').textContent = titles[tab][0];
+      document.getElementById('headerSub').textContent = titles[tab][1];
+      document.getElementById('main').scrollTop = 0;
+    });
+  });
+}
+
+renderItinerary();
+renderTransport();
+renderHotel();
+renderPack();
+renderBudget();
+initNav();
+</script>
+</body>
+</html>
